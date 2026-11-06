@@ -1,0 +1,5 @@
+﻿LightGBM 格點,內部驗證 IC（fold 平均）,被選中次數
+"{'num_leaves': 7, 'min_child_samples': 500}",0.1280161885130742,1.0
+"{'num_leaves': 7, 'min_child_samples': 2000}",0.12828666706398947,0.0
+"{'num_leaves': 15, 'min_child_samples': 500}",0.12897080807771258,0.0
+"{'num_leaves': 15, 'min_child_samples': 2000}",0.13160537050746257,3.0

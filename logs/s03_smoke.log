@@ -1,0 +1,46 @@
+                特徵      IC      lo      hi    BH q  五分位單調 ρ  頂底價差/20日     G1     G2     G3     G4     G5      決定
+0       peer_ret20 -0.0219 -0.0371 -0.0066  0.0085      0.1    0.0005   True   True  False  False   True  REVISE
+1       peer_ret60 -0.0239 -0.0414 -0.0063  0.0120      0.7    0.0025   True   True  False  False   True  REVISE
+2        peer_ret5  0.0009 -0.0075  0.0092  0.8355      0.6    0.0024  False  False  False  False  False    STOP
+3       peer_gap20  0.0142  0.0051  0.0234  0.0047     -1.0    0.0039   True   True   True  False   True  REVISE
+4   peer_breadth20 -0.0053 -0.0187  0.0080  0.4903      0.2    0.0022   True  False  False  False  False    STOP
+5     leader_ret20 -0.0199 -0.0328 -0.0070  0.0047      0.3    0.0015   True   True  False  False   True  REVISE
+6       peer_tight -0.0273 -0.0421 -0.0124  0.0008     -0.7    0.0068  False   True  False  False   True  REVISE
+7            ret20 -0.0287 -0.0430 -0.0144  0.0003      0.9    0.0042   True   True  False  False   True  REVISE
+8             rev5 -0.0092 -0.0171 -0.0012  0.0339      1.0    0.0032   True   True   True  False   True  REVISE
+9        mom120_20  0.0106 -0.0045  0.0258  0.2045      1.0    0.0127   True  False   True  False  False    STOP
+10    near_high250  0.0504  0.0280  0.0728  0.0000      1.0    0.0171  False   True   True   True   True  REVISE
+11           vol60 -0.0712 -0.0962 -0.0461  0.0000      0.7    0.0017  False   True  False  False   True  REVISE
+12       max_ret20 -0.0647 -0.0819 -0.0476  0.0000      0.3    0.0017  False   True  False  False   True  REVISE
+13     overnight20 -0.0581 -0.0714 -0.0447  0.0000     -0.4    0.0013  False   True  False  False   True  REVISE
+14    volume_surge -0.0181 -0.0276 -0.0085  0.0006      0.9    0.0018   True   True  False  False   True  REVISE
+15           adv60  0.0139  0.0008  0.0271  0.0496     -0.1    0.0000   True   True  False  False   True  REVISE
+16          beta60  0.0028 -0.0194  0.0250  0.8355      1.0    0.0062   True  False   True  False  False    STOP
+model features: ['peer_ret20', 'peer_ret60', 'leader_ret20', 'peer_tight', 'ret20', 'rev5', 'near_high250', 'vol60', 'max_ret20', 'overnight20', 'volume_surge', 'adv60', 'mkt_vol20', 'mkt_trend', 'disp20'] dropped: {'peer_gap20': 'ret20'}
+                特徵     比對格數  最大絕對差  不一致格數
+0       peer_ret20   994267    0.0      0
+1       peer_ret60   994268    0.0      0
+2        peer_ret5   994268    0.0      0
+3       peer_gap20   993314    0.0      0
+4   peer_breadth20   994267    0.0      0
+5     leader_ret20   994141    0.0      0
+6       peer_tight   994268    0.0      0
+7            ret20  1072721    0.0      0
+8             rev5  1073725    0.0      0
+9        mom120_20  1066754    0.0      0
+10    near_high250  1052745    0.0      0
+11           vol60  1073608    0.0      0
+12       max_ret20  1074376    0.0      0
+13     overnight20  1074376    0.0      0
+14    volume_surge  1073678    0.0      0
+15           adv60  1073717    0.0      0
+16          beta60  1073608    0.0      0
+17       mkt_vol20  5178880    0.0      0
+18       mkt_trend  5411525    0.0      0
+19          disp20  4968488    0.0      0
+            特徵   原始 IC  安慰劑 IC（移 21 日）  控制 beta、規模後 IC  控制後 lo  控制後 hi  再控制本股 ret20 後 IC     lo      hi 
+0  overnight20 -0.0581         -0.0368         -0.0532 -0.0647 -0.0416               NaN     NaN     NaN
+1    max_ret20 -0.0647         -0.0500         -0.0663 -0.0796 -0.0530               NaN     NaN     NaN
+2        vol60 -0.0712         -0.0658         -0.0799 -0.0992 -0.0607               NaN     NaN     NaN
+3   peer_ret20 -0.0219         -0.0105         -0.0120 -0.0232 -0.0009           -0.0069 -0.0158  0.0020
+4   peer_gap20  0.0142         -0.0086          0.0121  0.0036  0.0206            0.0002 -0.0073  0.0076
