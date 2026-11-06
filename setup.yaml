@@ -1,0 +1,167 @@
+# 交易設定 v1（ML4T 期中）——在下載任何資料、執行任何回測之前寫定並提交 git。
+# 參數調整留在 v1；機制改變（例如只做多 → 多空、加入新的成本項）就升版 v2，結果不可直接比較。
+setup_version: v1
+strategy: tw-peer-diffusion
+created: "2026-11-07"
+author: ntutidslab
+
+hypothesis:
+  mechanism: >-
+    經濟上相關的股票（同一供應鏈、同一需求來源）會受到共同的消息衝擊，但投資人注意力有限、
+    小型與冷門股的消息消化較慢，所以同族群股票近期的報酬會領先預告落後者未來的報酬。
+    個股本身的價格路徑（中期動能、接近前高、波動）反映投資人對新資訊的反應不足與定錨，與族群效果互補。
+  source_of_edge: >-
+    資訊擴散（informational / flow predictability）：對手是注意力有限、反應慢的投資人；
+    台股散戶比重高，同族群消息常先反映在大型或受關注的股票上。
+  literature: [Moskowitz-Grinblatt 1999 產業動能, Hou 2007 產業內領先落後, Cohen-Frazzini 2008 經濟連結, George-Hwang 2004 52 週高點]
+  falsification:
+    - 驗證期所有模型的每日 Spearman IC 的 Newey-West 95% CI 都包含 0 → 停止，不跑 holdout
+    - 族群特徵在 triage 全部 STOP（BH 校正後無一顯著）→ 族群擴散機制不成立（即使模型有效，也照實寫）
+    - 族群特徵的 IC 方向與假說相反（同伴過去漲 → 本股未來跌）→ 機制被否定
+  prior_exposure: >-
+    研究者在本期中之前做過同主題的探索（不同程式碼、不同設定），看過 2010–2026 台股整體走勢與部分特徵的表現。
+    無法消除這個事前知識；本次的處理方式是：所有設定在看資料前寫入本檔並提交 git，holdout 的資料由程式隔離，
+    只在最後執行一次；事前探索的大約試驗次數另列，用於 Deflated Sharpe 的敏感度分析。
+
+universe:
+  markets: [TWSE 上市, TPEx 上櫃]
+  instruments: 4 碼普通股（排除 ETF 00xx、TDR 91xx、特別股）
+  include_delisted: true          # FinMind 下市名單，下市日 >= 2006-01-01
+  eligibility:                    # 每日以 t 日收盤前資訊計算
+    min_raw_close_twd: 10
+    min_adv20_twd: 20000000       # 20 日平均成交金額（未還原價 × 成交股數）
+    min_age_days: 120             # 上市櫃滿 120 個交易日
+    must_trade_on_t: true
+
+decision_schedule:
+  snapshot: t 日收盤（台灣時間 13:30）後
+  execution: t+1 日開盤（09:00）
+  delay_days: 1
+  review_every_days: 20           # 每 20 個交易日檢視一次持股
+
+admissible_information:
+  data: 只用日 K 價量（開高低收、成交股數）與已公布的除權息結果；無基本面、文字資料
+  price_lookbacks_days: [5, 20, 60, 120, 250]
+  peer_window_days: 120           # 同伴股以過去 120 日的去市場化報酬相關係數決定
+  peer_update_days: 20
+  availability_lag: 價量在 t 日收盤即可得；除權息在除權息日開盤前公告
+
+label:
+  name: fwd20
+  type: fixed-horizon return（連續值）
+  definition: "open[t+21] / open[t+1] - 1"   # 從 t+1 開盤買進、持有 20 個交易日後的開盤賣出，對齊回測成交規則
+  horizon: 20
+  delisting: 下市股在最後交易日之後以最後收盤價計算（與回測一致）
+  training_target: 每日橫斷面百分位排名（rank 0~1）
+  overlap_note: 20 日標籤每日重疊，有效樣本約為日數 / 20；所有 IC 信賴區間用 Newey-West（lag = 20）
+
+features:
+  budget: 10-30 個候選，全部列在 triage 表，含失敗者
+  dedup: 依 Spearman |rho| > 0.8 分群，每群保留驗證 IC 絕對值最大者
+  representation: 每日橫斷面百分位排名（state 特徵不排名，用自身歷史擴張百分位）
+  candidates:
+    # ---- 族群（signal）
+    peer_ret20: {role: signal, driver: 族群消息擴散，同伴 20 日報酬, lookback: 20}
+    peer_ret60: {role: signal, driver: 產業中期動能, lookback: 60}
+    peer_ret5: {role: signal, driver: 短期領先落後（本週同伴先動）, lookback: 5}
+    peer_gap20: {role: signal, driver: 落後者補漲（同伴 20 日報酬 − 本股 20 日報酬）, lookback: 20}
+    peer_breadth20: {role: signal, driver: 族群擴散的廣度（同伴中 20 日報酬為正的比例）, lookback: 20}
+    leader_ret20: {role: signal, driver: 大型同伴領先小型股（同伴中成交金額前 3 名的 20 日報酬）, lookback: 20}
+    peer_tight: {role: state, driver: 族群連結強度（與同伴的平均相關係數）, lookback: 120}
+    # ---- 個股時間序列（signal）
+    ret20: {role: signal, driver: 短期動能／反轉, lookback: 20}
+    rev5: {role: signal, driver: 一週反轉（流動性提供）, lookback: 5}
+    mom120_20: {role: signal, driver: 中期動能（跳過最近 20 日）, lookback: 120}
+    near_high250: {role: signal, driver: 52 週高點定錨, lookback: 250}
+    vol60: {role: signal, driver: 低波動異常, lookback: 60}
+    max_ret20: {role: signal, driver: 樂透型偏好（最大單日報酬）, lookback: 20}
+    overnight20: {role: signal, driver: 隔夜報酬（散戶開盤買壓）, lookback: 20}
+    volume_surge: {role: signal, driver: 注意力（5 日量 / 60 日量）, lookback: 60}
+    adv60: {role: signal, driver: 規模與流動性（60 日平均成交金額，取 log）, lookback: 60}
+    beta60: {role: signal, driver: 市場曝險（低 beta 異常）, lookback: 60}
+    # ---- 市場狀態（state，所有股票同值）
+    mkt_vol20: {role: state, driver: 風險環境（加權報酬指數 20 日波動的擴張百分位）, lookback: 20}
+    mkt_trend: {role: state, driver: 多空趨勢（指數 / 200 日均線 − 1）, lookback: 200}
+    disp20: {role: state, driver: 橫斷面離散度（20 日報酬的橫斷面標準差）, lookback: 20}
+  triage_gates:
+    g1_correctness: 截斷重算測試 + 時間位移安慰劑（特徵往回移 21 日，IC 應消失；若仍存在標為慢速狀態代理）
+    g2_association: 分 fold IC、NW 95% CI、ICIR、同號 fold 比例、fwd5/fwd20/fwd60 衰退
+    g3_shape: 五分位平均 fwd20 是否單調（五分位序與報酬的 Spearman >= 0.9）
+    g4_feasibility: 五分位頂底價差（每 20 日）需 > 2 倍來回成本；回報特徵 20 日自相關隱含的換手
+    g5_search: 所有候選一起做 Benjamini-Hochberg（alpha = 0.05）
+    decision: PROCEED = 五關全過；STOP = CI 含 0 且 BH 不顯著；其餘 REVISE。PROCEED 與 REVISE 進模型，STOP 不進。
+  mechanism_checks: 前三名特徵畫 DAG；安慰劑、共同驅動控制（beta60、adv60）、波動三分位異質性
+
+score_to_trade:
+  entry: 檢視日排名前 20 名且未持有者，t+1 開盤買進
+  exit: 檢視日排名 > 60（3 倍緩衝）或離開可投資池 → t+1 開盤賣出
+  sizing: 等權每檔 5%（上限 10%），現金不再投資直到下一次檢視
+  no_trade_state: 分數缺值、未在可投資池、開盤漲停（不買，最多重試 5 日）、開盤跌停（不賣，隔日重試）
+  long_only: true
+
+constraints:
+  leverage: 1.0
+  max_weight: 0.10
+  shorting: false
+  cash: 允許（空位、買不到時持有現金，不計利息）
+
+cost_model:
+  class: 每邊比例成本 = 手續費 + 半價差；賣出另加證交稅
+  commission_bps: 14.25           # 0.1425%，不假設折讓
+  sell_tax_bps: 30                # 0.3%
+  half_spread_bps: 10             # 假設值，以掃描檢查敏感度
+  sweep_multipliers: [0, 0.5, 1, 2, 3, 4]
+  stress_spread_mult: 3
+
+evaluation_protocol:
+  engine: 自建事件驅動引擎（排名緩衝、現金、漲跌停、下市會影響下一步）
+  data_start: "2005-01-03"
+  train_start: "2007-01-02"
+  validation: ["2012-01-02", "2024-10-31"]   # walk-forward 樣本外區段
+  holdout: ["2024-11-01", "2026-10-30"]      # 最後 24 個月，今日封存，最後只執行一次
+  scheme: expanding window walk-forward
+  fold_length: 126                # 交易日；每 fold 重新訓練一次
+  step: 126
+  retrain_cadence: 每 fold
+  purge_days: 21                  # = 標籤跨度（t+1 到 t+21）
+  embargo_days: 0                 # 訓練永遠在測試之前，不需要
+  longest_feature_lookback: 250
+  train_sample_every_days: 5      # 標籤高度重疊，訓練列每 5 日取一次
+  hyperparameter_tuning: 固定 holdout 式的巢狀驗證——每個 fold 的訓練資料最後 126 日（前面再 purge 21 日）當內部驗證
+  holdout_seal: 程式在 holdout 執行前只讀得到 2024-10-31 以前的價格；holdout 執行一次後寫入 HOLDOUT_TOUCHED.json
+
+models:
+  yardstick: 每日 Spearman IC 平均 + Newey-West 95% CI（lag 20）；CI 不含 0 才算有訊號
+  ladder:
+    rule: {required: true, definition: "score = rank(peer_ret20)，純族群動能，事先由機制決定、不看 triage"}
+    ridge: {required: true, alpha_grid: [1e-3, 1e-2, 1e-1, 1, 10, 100, 1e3, 1e4, 1e5], preprocessing: 訓練 fold 內 winsorize 1%/99% 後標準化}
+    lightgbm:
+      required: true
+      objective: l1
+      grid: {num_leaves: [7, 15], min_child_samples: [500, 2000]}
+      fixed: {learning_rate: 0.03, n_estimators: 1000, subsample: 0.8, subsample_freq: 1, colsample_bytree: 0.8}
+      early_stopping_rounds: 50
+    ensemble: {required: false, definition: rule、ridge、lightgbm 的每日 z 分數平均}
+  selection_rule: >-
+    在驗證期選「IC 的 NW CI 不含 0、且相對前一階的成對 ΔIC CI 不含 0」的最高一階；
+    ΔIC 不顯著就保留較簡單的一階。集成只有在 ΔIC 相對最佳單一模型顯著時才部署。
+  interpretation: 部署模型的 SHAP（跨 fold 穩定性）；split conformal 80%/90% 區間與逐 fold 覆蓋率
+
+portfolio:
+  allocators: [ew, invvol]        # EW 為事先指定的部署；反波動只做比較（同訊號、同 60 日波動窗）
+  overlay: 策略波動目標（t-1 資訊），有無覆蓋都回報；覆蓋只有在驗證期 Sharpe 提升且 MDD 不變差時才部署
+  benchmarks: [0050 含息（FinMind 價格 + 除權息還原）, 可投資池等權, rule 基準]
+
+risk:
+  var: 歷史 95% VaR / CVaR（日），依市場狀態分組
+  drawdown: 深度、持續時間、恢復時間
+  beta: 對 0050 的 120 日滾動 beta，HAC 區間
+  stress_episodes: [2020-02-01~2020-04-30 COVID, 2022-01-01~2022-10-31 升息, holdout 內 2025-03-15~2025-05-15 關稅]
+  kill_switch: {watch: -0.10, halve: -0.15, halt_new_entries: -0.20, unwind: -0.25}
+  regime_slice: 市場 20 日波動（擴張三分位）× 趨勢（指數 > 200 日均線），門檻只用 t 日以前資料
+
+confirmatory_test:
+  holdout: ["2024-11-01", "2026-10-30"]
+  primary: 部署模型在 holdout 的每日 Spearman IC，NW 95% CI 下界 > 0
+  secondary: 部署策略 holdout 淨 Sharpe 的 Deflated Sharpe > 0.95（試驗數來自帳本）
+  descriptive: 對 0050 的超額 Sharpe 與兩平成本（24 個月的 Sharpe 標準誤約 ±0.7，不作為通過條件）
