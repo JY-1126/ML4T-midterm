@@ -1,7 +1,0 @@
-﻿關卡,條件,通過,數字
-訊號關,驗證 IC CI 下界 > 0,True,"0.113 [0.060, 0.165]"
-投組關,驗證毛 Sharpe > 池等權 Sharpe,False,0.65 vs 0.70
-成本關,驗證淨 Sharpe > 0050 且兩平成本（對零）> 2 倍假設,False,淨 0.55 vs 0050 0.91；258 bp
-holdout 關（主要）,holdout IC CI 下界 > 0（事先登記）,True,"0.092 [0.055, 0.130]"
-holdout 關（次要）,holdout DSR > 0.95（N = 0）,True,1.00
-holdout 對基準（描述）,holdout 淨 Sharpe vs 0050,True,2.77 vs 1.90

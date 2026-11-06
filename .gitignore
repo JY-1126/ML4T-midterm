@@ -5,3 +5,4 @@ data/*
 !data/README.md
 results/cache/
 .ipynb_checkpoints/
+logs/
