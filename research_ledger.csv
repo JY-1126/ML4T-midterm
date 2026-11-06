@@ -1,1 +1,43 @@
 strategy,trial_family,trial,run_id,timestamp,adaptive_choice,eval_window,metric,value,decision,gate,notes
+tw-peer-diffusion,feature triage,peer_ret20,03_features-20261107013315909,2026-11-07 01:33:15,include feature in model,2012-01-02~2024-10-31,daily IC,-0.018564,REVISE,G1-G5,BH q=0.0266
+tw-peer-diffusion,feature triage,peer_ret60,03_features-20261107013315909,2026-11-07 01:33:15,include feature in model,2012-01-02~2024-10-31,daily IC,-0.022444,REVISE,G1-G5,BH q=0.0251
+tw-peer-diffusion,feature triage,peer_ret5,03_features-20261107013315909,2026-11-07 01:33:15,include feature in model,2012-01-02~2024-10-31,daily IC,0.004081,STOP,G1-G5,BH q=0.385
+tw-peer-diffusion,feature triage,peer_gap20,03_features-20261107013315909,2026-11-07 01:33:15,include feature in model,2012-01-02~2024-10-31,daily IC,0.015608,REVISE,G1-G5,BH q=0.003
+tw-peer-diffusion,feature triage,peer_breadth20,03_features-20261107013315909,2026-11-07 01:33:15,include feature in model,2012-01-02~2024-10-31,daily IC,-0.003709,STOP,G1-G5,BH q=0.626
+tw-peer-diffusion,feature triage,leader_ret20,03_features-20261107013315909,2026-11-07 01:33:15,include feature in model,2012-01-02~2024-10-31,daily IC,-0.017136,REVISE,G1-G5,BH q=0.0172
+tw-peer-diffusion,feature triage,peer_tight,03_features-20261107013315909,2026-11-07 01:33:15,include feature in model,2012-01-02~2024-10-31,daily IC,-0.026702,REVISE,G1-G5,BH q=0.00182
+tw-peer-diffusion,feature triage,ret20,03_features-20261107013315909,2026-11-07 01:33:15,include feature in model,2012-01-02~2024-10-31,daily IC,-0.027397,REVISE,G1-G5,BH q=0.000533
+tw-peer-diffusion,feature triage,rev5,03_features-20261107013315909,2026-11-07 01:33:15,include feature in model,2012-01-02~2024-10-31,daily IC,-0.009014,REVISE,G1-G5,BH q=0.0389
+tw-peer-diffusion,feature triage,mom120_20,03_features-20261107013315909,2026-11-07 01:33:15,include feature in model,2012-01-02~2024-10-31,daily IC,0.008911,STOP,G1-G5,BH q=0.312
+tw-peer-diffusion,feature triage,near_high250,03_features-20261107013315909,2026-11-07 01:33:15,include feature in model,2012-01-02~2024-10-31,daily IC,0.049098,REVISE,G1-G5,BH q=0.000103
+tw-peer-diffusion,feature triage,vol60,03_features-20261107013315909,2026-11-07 01:33:15,include feature in model,2012-01-02~2024-10-31,daily IC,-0.071132,REVISE,G1-G5,BH q=1.98e-07
+tw-peer-diffusion,feature triage,max_ret20,03_features-20261107013315909,2026-11-07 01:33:15,include feature in model,2012-01-02~2024-10-31,daily IC,-0.064711,REVISE,G1-G5,BH q=2.23e-12
+tw-peer-diffusion,feature triage,overnight20,03_features-20261107013315909,2026-11-07 01:33:15,include feature in model,2012-01-02~2024-10-31,daily IC,-0.058253,REVISE,G1-G5,BH q=0
+tw-peer-diffusion,feature triage,volume_surge,03_features-20261107013315909,2026-11-07 01:33:15,include feature in model,2012-01-02~2024-10-31,daily IC,-0.019397,REVISE,G1-G5,BH q=0.000299
+tw-peer-diffusion,feature triage,adv60,03_features-20261107013315909,2026-11-07 01:33:15,include feature in model,2012-01-02~2024-10-31,daily IC,0.013345,REVISE,G1-G5,BH q=0.0592
+tw-peer-diffusion,feature triage,beta60,03_features-20261107013315909,2026-11-07 01:33:15,include feature in model,2012-01-02~2024-10-31,daily IC,0.003834,STOP,G1-G5,BH q=0.735
+tw-peer-diffusion,model class,rule,04_models-20261107013806871,2026-11-07 01:38:06,model rung,2012-01-02~2024-10-31,daily IC,-0.018564,not deployed,IC CI excludes 0 & paired ΔIC,
+tw-peer-diffusion,model class,ridge,04_models-20261107013806871,2026-11-07 01:38:06,model rung,2012-01-02~2024-10-31,daily IC,0.091013,not deployed,IC CI excludes 0 & paired ΔIC,
+tw-peer-diffusion,model class,lgbm,04_models-20261107013806871,2026-11-07 01:38:06,model rung,2012-01-02~2024-10-31,daily IC,0.106816,deploy,IC CI excludes 0 & paired ΔIC,
+tw-peer-diffusion,model class,ensemble,04_models-20261107013806871,2026-11-07 01:38:06,model rung,2012-01-02~2024-10-31,daily IC,0.093692,not deployed,IC CI excludes 0 & paired ΔIC,
+tw-peer-diffusion,ridge alpha (nested),alpha=0.001,04_models-20261107013806871,2026-11-07 01:38:06,hyperparameter,inner validation,inner IC,0.091953,chosen 0/25 folds,,
+tw-peer-diffusion,ridge alpha (nested),alpha=0.01,04_models-20261107013806871,2026-11-07 01:38:06,hyperparameter,inner validation,inner IC,0.091953,chosen 2/25 folds,,
+tw-peer-diffusion,ridge alpha (nested),alpha=0.1,04_models-20261107013806871,2026-11-07 01:38:06,hyperparameter,inner validation,inner IC,0.091953,chosen 0/25 folds,,
+tw-peer-diffusion,ridge alpha (nested),alpha=1,04_models-20261107013806871,2026-11-07 01:38:06,hyperparameter,inner validation,inner IC,0.091953,chosen 1/25 folds,,
+tw-peer-diffusion,ridge alpha (nested),alpha=10,04_models-20261107013806871,2026-11-07 01:38:06,hyperparameter,inner validation,inner IC,0.091954,chosen 3/25 folds,,
+tw-peer-diffusion,ridge alpha (nested),alpha=100,04_models-20261107013806871,2026-11-07 01:38:06,hyperparameter,inner validation,inner IC,0.091956,chosen 0/25 folds,,
+tw-peer-diffusion,ridge alpha (nested),alpha=1000,04_models-20261107013806871,2026-11-07 01:38:06,hyperparameter,inner validation,inner IC,0.091971,chosen 3/25 folds,,
+tw-peer-diffusion,ridge alpha (nested),alpha=10000,04_models-20261107013806871,2026-11-07 01:38:06,hyperparameter,inner validation,inner IC,0.092102,chosen 5/25 folds,,
+tw-peer-diffusion,ridge alpha (nested),alpha=100000,04_models-20261107013806871,2026-11-07 01:38:06,hyperparameter,inner validation,inner IC,0.091976,chosen 11/25 folds,,
+tw-peer-diffusion,lgbm grid (nested),"{'num_leaves': 7, 'min_child_samples': 500}",04_models-20261107013806871,2026-11-07 01:38:06,hyperparameter,inner validation,inner IC,0.111769,chosen 5/25 folds,,
+tw-peer-diffusion,lgbm grid (nested),"{'num_leaves': 7, 'min_child_samples': 2000}",04_models-20261107013806871,2026-11-07 01:38:06,hyperparameter,inner validation,inner IC,0.114417,chosen 7/25 folds,,
+tw-peer-diffusion,lgbm grid (nested),"{'num_leaves': 15, 'min_child_samples': 500}",04_models-20261107013806871,2026-11-07 01:38:06,hyperparameter,inner validation,inner IC,0.112898,chosen 5/25 folds,,
+tw-peer-diffusion,lgbm grid (nested),"{'num_leaves': 15, 'min_child_samples': 2000}",04_models-20261107013806871,2026-11-07 01:38:06,hyperparameter,inner validation,inner IC,0.114695,chosen 8/25 folds,,
+tw-peer-diffusion,portfolio backtest,lgbm（淨）,05_backtest-20261107013844290,2026-11-07 01:38:44,model → portfolio,2012-01-02~2024-10-31,net Sharpe,1.188637,deployed,,
+tw-peer-diffusion,portfolio backtest,rule（淨）,05_backtest-20261107013844290,2026-11-07 01:38:44,model → portfolio,2012-01-02~2024-10-31,net Sharpe,0.277229,comparison,,
+tw-peer-diffusion,portfolio backtest,ridge（淨）,05_backtest-20261107013844290,2026-11-07 01:38:44,model → portfolio,2012-01-02~2024-10-31,net Sharpe,1.038886,comparison,,
+tw-peer-diffusion,portfolio backtest,ensemble（淨）,05_backtest-20261107013844290,2026-11-07 01:38:44,model → portfolio,2012-01-02~2024-10-31,net Sharpe,1.200607,comparison,,
+tw-peer-diffusion,allocator,ew,05_backtest-20261107013844290,2026-11-07 01:38:44,allocator,2012-01-02~2024-10-31,net Sharpe (phase avg),1.205158,deployed (pre-registered EW),,
+tw-peer-diffusion,allocator,invvol,05_backtest-20261107013844290,2026-11-07 01:38:44,allocator,2012-01-02~2024-10-31,net Sharpe (phase avg),1.196317,comparison only,,
+tw-peer-diffusion,risk overlay,波動目標,05_backtest-20261107013844290,2026-11-07 01:38:44,overlay on/off,2012-01-02~2024-10-31,net Sharpe,1.202287,deploy,,
+tw-peer-diffusion,risk overlay,停損階梯,05_backtest-20261107013844290,2026-11-07 01:38:44,overlay on/off,2012-01-02~2024-10-31,net Sharpe,1.088391,do not deploy,,

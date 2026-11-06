@@ -1,0 +1,27 @@
+{
+ "features": [
+  "peer_ret20",
+  "peer_ret60",
+  "peer_gap20",
+  "leader_ret20",
+  "peer_tight",
+  "ret20",
+  "rev5",
+  "near_high250",
+  "vol60",
+  "max_ret20",
+  "overnight20",
+  "volume_surge",
+  "adv60",
+  "mkt_vol20",
+  "mkt_trend",
+  "disp20"
+ ],
+ "dropped_as_duplicate": {},
+ "stopped": [
+  "peer_ret5",
+  "peer_breadth20",
+  "mom120_20",
+  "beta60"
+ ]
+}
