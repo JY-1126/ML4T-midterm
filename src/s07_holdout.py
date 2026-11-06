@@ -233,19 +233,29 @@ def main(reason: str | None):
     print(drift.round(3).to_string()); print(pd.DataFrame(ps).to_string()); print("PIT diff vs dev:", pit_diff)
 
 
-def figures(btv, bt, icv, ich, dep):
+def equity_figure(btv, bt, dep):
+    import matplotlib.dates as mdates
+    from matplotlib.ticker import NullFormatter, ScalarFormatter
     fig, ax = plt.subplots(1, 2, figsize=(10, 3.4), gridspec_kw={"width_ratios": [3, 1.3]})
-    for a, b, lab in ((ax[0], btv, "驗證"), (ax[1], bt, "holdout")):
+    for a, b, lab in ((ax[0], btv, "驗證 2012-01 ~ 2024-10"), (ax[1], bt, "holdout 2024-11 ~ 2026-10")):
         a.plot(b["res"][dep]["equity"], lw=1.3, color="#1c7ed6", label=f"{dep}（淨）")
         if "rule" in b["res"]:
             a.plot(b["res"]["rule"]["equity"], lw=0.9, color="#868e96", label="規則基準（淨）")
         a.plot(b["bench"]["0050"], lw=0.9, color="#e03131", label="0050 含息")
         a.plot(b["bench"]["可投資池等權"], lw=0.8, color="#f08c00", ls="--", label="池等權")
-        a.set_yscale("log"); a.set_title(lab, fontsize=9); a.tick_params(labelsize=7)
+        a.set_yscale("log")
+        a.yaxis.set_major_formatter(ScalarFormatter()); a.yaxis.set_minor_formatter(NullFormatter())
+        a.set_title(lab, fontsize=9); a.tick_params(labelsize=7)
+    ax[1].set_yticks([0.6, 0.8, 1.0, 1.5, 2.0, 3.0])
+    ax[1].xaxis.set_major_locator(mdates.MonthLocator(bymonth=(1, 7)))
+    ax[1].xaxis.set_major_formatter(mdates.DateFormatter("%Y-%m"))
     ax[0].legend(fontsize=7)
-    ax[1].axvline(HO_START, color="k", ls="--", lw=0.8)
-    fig.suptitle("扣成本後，策略在驗證期與 holdout 是否都贏過規則基準與 0050？（左右兩段各自從 1 起算，中間是封存邊界）", fontsize=9)
+    fig.suptitle("扣成本後，策略在驗證期與 holdout 是否都贏過規則基準與 0050？（兩段各自從 1 起算，對數刻度）", fontsize=9)
     fig.tight_layout(); fig.savefig(FIG / "07_equity.png", dpi=150); plt.close(fig)
+
+
+def figures(btv, bt, icv, ich, dep):
+    equity_figure(btv, bt, dep)
 
     fig, ax = plt.subplots(figsize=(10, 3))
     s = pd.concat([icv, ich]).sort_index()
@@ -272,4 +282,11 @@ def yearly(btv, bt, dep):
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--rerun-reason")
-    main(ap.parse_args().rerun_reason)
+    ap.add_argument("--figures-only", action="store_true", help="只用已存的回測結果重畫權益曲線，不讀 holdout、不動封存")
+    a = ap.parse_args()
+    if a.figures_only:
+        dep_ = json.loads((OUT / "04_deployed.json").read_text(encoding="utf-8"))["deployed"]
+        equity_figure(pickle.load(open(CACHE / "05_val_backtest.pkl", "rb")),
+                      pickle.load(open(CACHE / "07_ho_backtest.pkl", "rb")), dep_)
+    else:
+        main(a.rerun_reason)

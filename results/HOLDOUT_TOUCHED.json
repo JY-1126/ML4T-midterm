@@ -1,0 +1,12 @@
+[
+ {
+  "time": "2026-11-07 01:39:38",
+  "git_commit": "41aa5e5",
+  "setup_sha256": "91f31468dad5",
+  "holdout": [
+   "2024-11-01",
+   "2026-10-30"
+  ],
+  "reason": "first and only planned run"
+ }
+]

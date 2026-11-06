@@ -6,3 +6,4 @@ data/*
 results/cache/
 .ipynb_checkpoints/
 logs/
+report/

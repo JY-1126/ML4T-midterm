@@ -50,6 +50,7 @@ STAGES = [
      'print((R / "07_pattern.txt").read_text(encoding="utf-8"))\n'
      'for t in ("ic", "inference", "attrition", "drift", "regime_mix", "psi", "yearly", "ho_main", "ho_breakeven", "ho_phases", '
      '"ho_stress", "ho_killswitch"): show(f"07_{t}")\n'
+     'show("08_feature_ic"); show("08_holdout_regime_ic")\n'
      'fig("07_equity.png"); fig("07_rolling_ic.png"); fig("07_ho_cost.png"); fig("07_ho_regime.png"); fig("04_shap.png", 650); '
      'fig("07_ho_drawdown.png")'),
 ]
