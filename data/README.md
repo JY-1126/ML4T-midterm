@@ -1,10 +1,11 @@
 # data/
 
-原始資料與加工後資料都不進 git；從 repo 根目錄重新產生：
+`data/raw/` 是報告所用的原始資料快照（2026-11-07 下載，約 190 MB），已放進 git，不必重新下載。
+加工後的檔案（prices.parquet 285 MB 等）超過 GitHub 單檔上限，不進 git，從 repo 根目錄重建：
 
 ```
-python -m src.data_fetch      # 下載到 data/raw/（yfinance、FinMind；FinMind 免費額度約 2 小時）
-python -m src.s02_data        # 加工成 data/prices.parquet、meta.csv、bench.parquet 並產生品質報告
+python -m src.s02_data        # data/raw → data/prices.parquet、meta.csv、bench.parquet，並產生品質報告（數分鐘）
+python -m src.data_fetch      # （選用）重新下載 data/raw/；FinMind 免費額度約需 2 小時
 ```
 
 | 檔案 | 內容 |

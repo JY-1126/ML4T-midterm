@@ -3,6 +3,7 @@ __pycache__/
 *.pyc
 data/*
 !data/README.md
+!data/raw/
 results/cache/
 .ipynb_checkpoints/
 logs/

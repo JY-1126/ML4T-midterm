@@ -5,8 +5,8 @@
 
 | 繳交物 | 位置 |
 |---|---|
-| Proposal（PDF，主文 10–14 頁 + 附錄） | [`report/proposal.pdf`](report/proposal.pdf) |
-| 簡報（≤ 12 頁） | [`report/slides.pdf`](report/slides.pdf) |
+| Proposal（PDF）與簡報 | 另外繳交，不放在 repo |
+| 原始資料快照（2026-11-07 下載） | [`data/raw/`](data/raw/)（見 [`data/README.md`](data/README.md)） |
 | 交易設定與協定（Week 1 提交，看資料之前） | [`setup.yaml`](setup.yaml) |
 | 研究帳本（Strategy → Trial family → Trial → Run） | [`research_ledger.csv`](research_ledger.csv) |
 | 執行紀錄（git commit、資料快照、設定、評估區間、指標、決策） | [`run_log.csv`](run_log.csv) |
@@ -26,18 +26,19 @@
 
 ## 重現（從 repo 根目錄）
 
+原始資料已放在 `data/raw/`（報告所用的同一份快照，2026-11-07 下載），**不需要重新下載**：
+
 ```bash
 python -m venv .venv
-.venv/Scripts/python -m pip install -r requirements.txt     # 精確版本見 requirements-lock.txt
-.venv/Scripts/python run_all.py --fetch --holdout           # 下載 → s02 → s01 → s03 … s07
+.venv/Scripts/python -m pip install -r requirements.txt     # 精確版本見 requirements-lock.txt（Python 3.14）
+.venv/Scripts/python run_all.py --holdout                   # data/raw → s02 → s01 → s03 … s07 → s08（約 1 小時）
 .venv/Scripts/python make_notebooks.py                      # 重新執行 notebooks
-.venv/Scripts/python report/build_report.py                 # proposal.html / .pdf（需要 Microsoft Edge）
-.venv/Scripts/python report/build_slides.py                 # slides.pdf
 ```
 
-- 下載時間：yfinance 約 10 分鐘；FinMind 免費額度約每小時 300 次，下市股約需 2 小時（被限制時程式會安靜等 65 分鐘）。
-- 數字可能和報告不同的原因：資料下載日不同（yfinance 會回溯修正還原價、FinMind 名單會更新）。
-  本報告的資料下載日見 `data/raw/listed.csv` 與 `results/02_summary.csv`；LightGBM 固定 `random_state = 42`。
+- 只想看結果：`results/` 的表格與圖、`notebooks/07_results.ipynb` 都已附上執行結果，不必重跑。
+- 用 repo 內的原始資料重跑，總表數字應與報告相同（LightGBM 固定 `random_state = 42`）。
+- 想從頭重新下載：`run_all.py --fetch --holdout`（yfinance 約 10 分鐘；FinMind 免費額度約每小時 300 次，下市股約需 2 小時）。
+  新下載的資料可能和快照不同（yfinance 會回溯修正還原價、FinMind 名單會更新），數字因此可能小幅改變。
 - holdout 已封存：`run_all.py --holdout` 會以「reproduction run」為理由重跑，並附加在封存紀錄，不改任何設定。
 
 ## Repo 結構
@@ -56,9 +57,8 @@ src/
   models.py             rule / Ridge / LightGBM / 集成、walk-forward、conformal
   engine.py             事件驅動回測
   s01_setup.py … s07_holdout.py   各階段（對應 notebooks/01 … 07）
-report/                 proposal 與簡報產生器
 results/                表格（csv / md）與 figures/
-data/                   不進 git，見 data/README.md
+data/raw/               原始資料快照（進 git）；加工檔（prices.parquet 等，> 100 MB）由 s02 重建、不進 git
 ```
 
 ## 事前接觸資料的揭露
