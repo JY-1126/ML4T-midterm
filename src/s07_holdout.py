@@ -76,7 +76,9 @@ def classify(v: dict, h: dict, net_h: float, bench_h: float, be_h: float) -> str
 def ledger_trials() -> tuple[int, float]:
     L = pd.read_csv(ROOT / "research_ledger.csv", encoding="utf-8", dtype=str)
     L = L[~L.notes.fillna("").str.contains("SMOKE")]
-    n = L.drop_duplicates(["trial_family", "trial"]).shape[0]
+    # 只算 holdout 之前的搜尋：排除確認性檢定本身；重現執行會重複寫入同樣的試驗，每個試驗只算第一次
+    L = L[L.trial_family != "confirmatory test"].drop_duplicates(["trial_family", "trial"])
+    n = L.shape[0]
     sr = pd.to_numeric(L[L.metric.str.contains("Sharpe", na=False)].value, errors="coerce").dropna()
     return n, float(sr.var()) if len(sr) > 2 else 0.25
 
